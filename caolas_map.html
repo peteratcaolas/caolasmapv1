@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CAOLAS Community Map | Argyll Hope Spot</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        
+        /* Popup Custom Styling */
+        .mapboxgl-popup { max-width: 320px !important; }
+        .popup-card { padding: 5px; color: #333; }
+        .popup-media { width: 100%; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .popup-title { font-size: 1.1rem; font-weight: 700; color: #005a87; margin-bottom: 5px; }
+        .popup-desc { font-size: 0.9rem; line-height: 1.4; margin-bottom: 10px; }
+        
+        .btn-more {
+            display: inline-block;
+            background: #0074D9;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .btn-more:hover { background: #005a87; }
+
+        .funder-section {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
+            font-size: 0.75rem;
+            color: #666;
+        }
+        .funder-section span { font-weight: bold; color: #444; }
+
+        /* Sidebar Logo/Title */
+        #brand {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-left: 5px solid #005a87;
+        }
+        #brand h1 { margin: 0; font-size: 1.2rem; color: #005a87; }
+        #brand p { margin: 0; font-size: 0.8rem; color: #555; }
+    </style>
+</head>
+<body>
+
+<div id="brand">
+    <h1>CAOLAS Projects</h1>
+    <p>Protecting the Loch Sunart & Sound of Jura MPA</p>
+</div>
+
+<div id="map"></div>
+
+<script>
+    // Your Token Applied
+    mapboxgl.accessToken = 'pk.eyJ1IjoicGV0ZXJnNDIiLCJhIjoiY21tZHRocGp2MDY5MTJwczVhYnp6YjU3NyJ9.Ex_9Z_-23Db7L7kcJvucEw';
+
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/satellite-streets-v12', // Satellite view highlights the marine environment
+        center: [-5.776, 56.539], // Centered on Lochaline
+        zoom: 10.5,
+        pitch: 45, // 3D Tilt
+        bearing: -15
+    });
+
+    // Project Data with Media & Funders
+    const caolasData = {
+        'type': 'FeatureCollection',
+        'features': [
+            {
+                'type': 'Feature',
+                'geometry': { 'type': 'Point', 'coordinates': [-5.775, 56.538] },
+                'properties': {
+                    'title': 'Lochaline Native Oyster Project (LNOP)',
+                    'description': 'Restoring 20,000 native oysters to the seabed. These "ecosystem engineers" filter water and boost biodiversity.',
+                    'image': 'IMG_20241009_160300.jpg',
+                    'video': '', // Use 'https://www.youtube.com/embed/VIDEO_ID' for videos
+                    'link': 'https://caolas.org/projects/',
+                    'funders': 'HIEF, Nature Restoration Fund, SMEEF'
+                }
+            },
+            {
+                'type': 'Feature',
+                'geometry': { 'type': 'Point', 'coordinates': [-5.950, 56.020] },
+                'properties': {
+                    'title': 'Flapper Skate Monitoring',
+                    'description': 'The Sound of Jura is a stronghold for the Critically Endangered Flapper Skate. We help monitor their breeding grounds.',
+                    'image': 'https://caolas.org/wp-content/uploads/2021/04/Flame-Shell.jpg',
+                    'link': 'https://caolas.org/about-us/',
+                    'funders': 'William Grant Foundation, NatureScot'
+                }
+            },
+            {
+                'type': 'Feature',
+                'geometry': { 'type': 'Point', 'coordinates': [-5.780, 56.545] },
+                'properties': {
+                    'title': 'Coastal Warming Data Loggers',
+                    'description': 'Deploying sea-level and temperature loggers to track the impacts of climate change on local habitats.',
+                    'image': 'coastalwarming.jpeg', 
+                    'video': 'https://www.youtube.com/embed/M7lc1UVf-VE', // Placeholder Video
+                    'link': 'https://caolas.org/coastalwarming/',
+                    'funders': 'Community Volunteers, SMEEF'
+                }
+            },
+            {
+                'type': 'Feature',
+                'geometry': { 'type': 'Point', 'coordinates': [-5.904, 56.552] },
+                'properties': {
+                    'title': 'Morvern Baseline Project: Completed 2023',
+                    'description': 'The Morvern Baseline Project captured a comprehensive ecological snapshot of the Morvern coastline, conducted by Dr Texa Sim, including: Shoreline transects, Intertidal biodiversity surveys, Habitat mapping. This work provides essential baseline data to inform future monitoring, restoration planning, and marine management decisions.',
+                    'image': 'ScenicSurveyLocation.jpg',
+                    'link': 'https://caolas.org/morvernbaseline/',
+                    'funders': 'HIEF, SAMS, Local Volunteers'
+                }
+            },
+            {
+                'type': 'Feature',
+                'geometry': { 'type': 'Point', 'coordinates': [-5.850, 56.633] },
+                'properties': {
+                    'title': 'Serpulid Reef Surveys (Loch Teacuis): Completed 2022',
+                    'description': 'This specialist underwater survey focused on the nationally significant reef-building worm Serpula vermicularis in Loch Teacuis. These fragile biogenic reefs are rare and highly sensitive habitats. The project collected habitat and visual survey data to raise awareness and support long-term protection within the MPA.',
+                    'image': 'serpula.jpg',
+                    'link': 'https://caolas.org/serpulidsurveys/',
+                    'funders': 'Argyll Coast & Islands Hope Spot, Carna Hope Week'
+                }
+            },
+        ]
+    };
+
+    map.on('load', () => {
+        // Add 3D Terrain
+        map.addSource('mapbox-dem', {
+            'type': 'raster-dem',
+            'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+            'tileSize': 512,
+            'maxzoom': 14
+        });
+        map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+
+        // Add Data
+        map.addSource('projects', { 'type': 'geojson', 'data': caolasData });
+
+        // Add Layer
+        map.addLayer({
+            'id': 'project-layer',
+            'type': 'circle',
+            'source': 'projects',
+            'paint': {
+                'circle-radius': 12,
+                'circle-color': '#0074D9',
+                'circle-stroke-width': 3,
+                'circle-stroke-color': '#fff'
+            }
+        });
+
+        // Click Logic
+        map.on('click', 'project-layer', (e) => {
+            const props = e.features[0].properties;
+            const coord = e.features[0].geometry.coordinates;
+
+            let mediaHTML = '';
+            if (props.video) {
+                mediaHTML = `<iframe class="popup-media" height="150" src="${props.video}" frameborder="0" allowfullscreen></iframe>`;
+            } else if (props.image) {
+                mediaHTML = `<img src="${props.image}" class="popup-media">`;
+            }
+
+            const html = `
+                <div class="popup-card">
+                    ${mediaHTML}
+                    <div class="popup-title">${props.title}</div>
+                    <div class="popup-desc">${props.description}</div>
+                    <a href="${props.link}" target="_blank" class="btn-more">Project Details</a>
+                    <div class="funder-section">Funded by: <span>${props.funders}</span></div>
+                </div>
+            `;
+
+            new mapboxgl.Popup()
+                .setLngLat(coord)
+                .setHTML(html)
+                .addTo(map);
+        });
+
+        // Pointer Cursor
+        map.on('mouseenter', 'project-layer', () => map.getCanvas().style.cursor = 'pointer');
+        map.on('mouseleave', 'project-layer', () => map.getCanvas().style.cursor = '');
+    });
+</script>
+
+</body>
+</html>
